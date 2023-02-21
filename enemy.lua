@@ -218,7 +218,7 @@ function enemy.spawnManager(dt)
 		end
 	else
 		--If can't spawn anything else, spawn this
-		creatureToSpawn = enemy.bat01
+		creatureToSpawn = nil
 	end
 
 	--Randomly chooses a side of the player to spawn on

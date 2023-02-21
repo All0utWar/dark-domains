@@ -108,6 +108,7 @@ function player.kill(dt, user, transitionTime)
 	gameOverTimer = gameOverTimer + 1 * dt
 	if gameOverTimer >= transitionTime then
 		switchGameState("gameOver")
+		playMusic("msc_menuscreen")
 		gameOverTimer = 0
 	end
 end

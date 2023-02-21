@@ -111,14 +111,14 @@ function consumable.affect(user, con_index)
 	if conType == "money" then
 		willConsume = true
 		int_totalCoins = int_totalCoins + conAmount
-		playSound(snd_pickup_coins)
+		playSound("snd_pickup_coins")
 	elseif conType == "health" then
 		if user.health >= user.maxHealth then
 			willConsume = false
 		else
 			willConsume = true
 			user.health = user.health + conAmount
-			playSound(snd_pickup_consumable)
+			playSound("snd_pickup_consumable")
 		end
 	elseif conType == "magic" then
 		willConsume = true

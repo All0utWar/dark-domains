@@ -73,7 +73,7 @@ function button.draw()
 					yoffset = -6
 				end
 
-				if button[i].text == "Credits" or button[i].text == "Stats" or button[i].text == "Options" then
+				if button[i].text == "Credits" or button[i].text == "Stats" or (button[i].text == "Options" and str_gameState == "menu") then
 					love.graphics.setFont(font_subbertitle)
 				end
 
@@ -89,7 +89,7 @@ end
 function button.detectVisibility(me)
 	--Checks to make sure buttons are only usable/rendered when they need to be.
 	--CHECKS: PAUSE MENU -> PANEL BUTTONS -> EDITOR BUTTONS + MENU BUTTONS
-	if (me.activeState == "pause" and bool_gamePaused) or (me.activeState == str_panelOpen) or (me.activeState == str_gameState and not bool_gamePaused and not bool_optionsOpen) then
+	if (me.activeState == "pause" and bool_gamePaused and not bool_optionsOpen) or (me.activeState == str_panelOpen) or (me.activeState == str_gameState and not bool_gamePaused and not bool_optionsOpen) then
 		me.enabled = true
 	else
 		me.enabled = false
@@ -118,6 +118,7 @@ function button.clickAction(mButton)
 		for i = 1, #button do
 			if button[i].highlight then
 				local action = button[i].action
+
 --MAIN MENU ACTIONS
 				if action == "play" then
 					switchGameState("ingame")
@@ -132,6 +133,7 @@ function button.clickAction(mButton)
 					switchGameState("credits")
 				elseif action == "options" then
 					button.openPanel(action)
+
 --PAUSE MENU ACTIONS
 				elseif action == "resume" then
 					--Will unpause game
@@ -139,6 +141,7 @@ function button.clickAction(mButton)
 				elseif action == "quitSession" then
 					switchGameState("menu")
 					finishCurrentGame()
+
 --SHOP MENU ACTIONS
 				elseif action == "upgrade1" then
 					upgradeStat(action)
@@ -146,26 +149,47 @@ function button.clickAction(mButton)
 					upgradeStat(action)
 				elseif action == "upgrade3" then
 					upgradeStat(action)
+
 --GAME OVER ACTIONS
 				elseif action == "returnMenu" then
 					switchGameState("menu")
 					finishCurrentGame()
+
 --STATS SCREEN ACTIONS
 				elseif action == "stats" then
 					switchGameState("stats")
+
 --OPTIONS ACTIONS
 				elseif action == "master_vol_up" then
-					--changeMscVolume("+")
+					float_masterVolume = changeVolume(float_masterVolume, "+")
+					setNewVolume()
+					saveGame()
+
 				elseif action == "master_vol_down" then
-					--changeMscVolume("-")
+					float_masterVolume = changeVolume(float_masterVolume, "-")
+					setNewVolume()
+					saveGame()
+
 				elseif action == "msc_vol_up" then
-					changeMscVolume("+")
+					float_mscVolume = changeVolume(float_mscVolume, "+")
+					setNewVolume()
+					saveGame()
+
 				elseif action == "msc_vol_down" then
-					changeMscVolume("-")
+					float_mscVolume = changeVolume(float_mscVolume, "-")
+					setNewVolume()
+					saveGame()
+
 				elseif action == "snd_vol_up" then
-					--changeVolume("+")
+					float_sndVolume = changeVolume(float_sndVolume, "+")
+					setNewVolume()
+					saveGame()
+
 				elseif action == "snd_vol_down" then
-					--changeVolume("-")
+					float_sndVolume = changeVolume(float_sndVolume, "-")
+					setNewVolume()
+					saveGame()
+
 				elseif action == "options_keybinds_moveLeft" then
 					start_keybind_change("moveLeft", button[i])
 				elseif action == "options_keybinds_moveRight" then

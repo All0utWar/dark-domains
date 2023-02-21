@@ -9,12 +9,9 @@ function switchGameState(newState) --Used for button.lua actions
 		love.mouse.setVisible(true)
 
 		--Stop menu music from interferring with ingame music and vice-versa
-		--needs fixed
-		if newState == "ingame"  or newState == "menu" or newState == "gameOver" then
+		if (newState == "ingame" and str_prevGameState == "menu") or (newState == "gameOver" and str_prevGameState == "ingame") or (newState == "menu" and str_prevGameState == "ingame") then
 			stopMusic()
 		end
-
-		--isDebug = false
 	end
 end
 
@@ -374,7 +371,7 @@ end
 function startNewGame()
 	int_totalRuns = statTrack(int_totalRuns, 1)
 	stopSound("msc_menuscreen")
-	playMusic("msc_gameplay", .05)
+	playMusic("msc_gameplay")
 	player.spawn(int_world_width / 2, int_world_height / 2)
 
 	weapon.spawnInitial(int_world_width / 2, int_world_height / 2)
@@ -395,7 +392,7 @@ function finishCurrentGame()
 	--switchGameState("menu")
 	love.mouse.setVisible(true)
 	stopSound("msc_gameplay")
-	playMusic("msc_menuscreen", .06)
+	playMusic("msc_menuscreen")
 
 	saveGame()
 
@@ -404,6 +401,11 @@ function finishCurrentGame()
 end
 
 function initialGameSettings()
+	float_masterVolume = 1		--Audio Settings
+	float_mscVolume = 0.5		--Audio Settings
+	float_sndVolume = 0.5		--Audio Settings
+	setNewVolume()
+
 	int_stats_max = 5			--STATIC
 	float_stats_incr10 = .1		--STATIC
 	float_stats_incr5 = .05		--STATIC
@@ -505,7 +507,10 @@ end
 
 function saveGame()
 	local plr = player[1]
-	local data = {stats_dmg = int_stats_dmg,
+	local data = {masterVolume = float_masterVolume,
+					musicVolume = float_mscVolume,
+					soundVolume = float_sndVolume,
+					stats_dmg = int_stats_dmg,
 					stats_speed = int_stats_speed,
 					stats_hp = int_stats_hp,
 					allTimeKills = int_allTimeKills,
@@ -532,10 +537,14 @@ function loadGame()
 		--Unpacks the table data into a data table
 		data = TSerial.unpack(data)
 
-		--Assign each variable to its data value
-		int_stats_dmg = data.stats_dmg
-		int_stats_speed = data.stats_speed
-		int_stats_hp = data.stats_hp
+		--Assign each variable to its data value or if it can't find the value it resets to 0
+		float_masterVolume = data.masterVolume or float_masterVolume
+		float_mscVolume = data.musicVolume or float_mscVolume
+		float_sndVolume = data.soundVolume or float_sndVolume
+
+		int_stats_dmg = data.stats_dmg or 0
+		int_stats_speed = data.stats_speed or 0
+		int_stats_hp = data.stats_hp or 0
 
 		int_allTimeKills = data.allTimeKills or 0
 		int_totalBatKills = data.allBatKills or 0
@@ -550,56 +559,37 @@ function loadGame()
 	end
 end
 
-function changeSndVolume()
-
-end
-
-function changeMscVolume(sign)
-	local maxVolume = 0.9
-	local minVolume = 0.2
-
-	if sign == "+" then
-		if float_mscVolume < maxVolume then
-			float_mscVolume = float_mscVolume + 0.1
-		end
-	elseif sign == "-" then
-		if float_mscVolume > minVolume then
-			float_mscVolume = float_mscVolume - 0.1
-		else
-			float_mscVolume = 0
-		end
-	end
-
-	for i,v in pairs(msc_effects) do
-		v:setVolume(float_masterVolume * float_mscVolume)
-	end
-end
-
 function changeVolume(sndType, sign)
-	local maxVolume = 0.9
-	local minVolume = 0.1
+	local maxVolume = 0.8
+	local minVolume = 0.2
 
 	if sign == "+" then
 		if sndType < maxVolume then
 			sndType = sndType + 0.1
+		else
+			sndType = 1
 		end
 	elseif sign == "-" then
 		if sndType > minVolume then
 			sndType = sndType - 0.1
+		else
+			sndType = 0
 		end
 	end
 
+	return sndType
+end
+
+function setNewVolume()
 	for i,v in pairs(msc_effects) do
-		v:setVolume(float_masterVolume * sndType)
+		v:setVolume(float_masterVolume * float_mscVolume)
 	end
 
 	for i,v in pairs(snd_effects) do
-		v:setVolume(float_masterVolume * sndType)
+		v:setVolume(float_masterVolume * float_sndVolume)
 	end
-
-	print(float_mscVolume)
-	print(float_sndVolume)
 end
+
 --Accepts string value
 function playSound(snd, pitch)
 	local hasPlayed = false

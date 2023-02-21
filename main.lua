@@ -22,7 +22,7 @@ local utf8 = require("utf8")
 
 function love.load()
 	str_BUILD_VERSION = "0.2b"
-	str_BUILD_DATE = "02/20/2023"
+	str_BUILD_DATE = "02/21/2023"
 	str_LOVE_VERSION = "11.3"
 	str_GAME_NAME = "Dark\nDomains"
 	str_FoN = "Dungeon Keepers"
@@ -35,17 +35,13 @@ function love.load()
 	--Load our textures, sounds, etc
 	resourceLoad()
 
-	float_masterVolume = 0.6
-	float_mscVolume = 0.1
-	float_sndVolume = 0.1
-	--changeVolume("music", int_mscVolume)
-	--changeVolume("effects", int_sndVolume)
-
 	love.graphics.setFont(font_gameText)
 	love.graphics.setBackgroundColor(0, 0, 0)
 	int_window_width, int_window_height = 1920, 1080
-	--int_user_window_width, int_user_window_height = love.window.getDesktopDimensions()
+
 	int_user_window_width, int_user_window_height = 1280, 720
+	int_user_window_width, int_user_window_height = love.window.getDesktopDimensions()
+
 	int_world_width, int_world_height = 4096, 4096
 
 	rs.init({width = int_window_width, height = int_window_height, mode = 2})
@@ -53,7 +49,7 @@ function love.load()
 
 	--Sets actual window resolution
 	rs.setMode(int_user_window_width, int_user_window_height, {resizable = true})
-	love.window.setFullscreen(false)
+	love.window.setFullscreen(true)
 
 	love.mouse.setCursor(crsr_default)
 
@@ -84,9 +80,9 @@ function love.load()
 	button.spawn("img_ui_button_QD", "play", "menu", int_window_width/2, int_window_height/2, 300, 125, "Play")
 	button.spawn("img_ui_button_QD", "shop", "menu", int_window_width/2, int_window_height/2 + 150, 300, 125, "Shop")
 	button.spawn("img_ui_button_QD", "quit", "menu", int_window_width/2, int_window_height/2 + 300, 300, 125, "Quit")
-	button.spawn("img_ui_button_QD", "credits", "menu", int_window_width/2 + 75, int_window_height/2 + 410, 135, 65, "Credits")
-	button.spawn("img_ui_button_QD", "stats", "menu", int_window_width/2 - 75, int_window_height/2 + 410, 135, 65, "Stats")
-	button.spawn("img_ui_button_QD", "options", "menu", int_window_width/2 + 225, int_window_height/2 + 410, 135, 65, "Options")
+	button.spawn("img_ui_button_QD", "stats", "menu", int_window_width/2 - 150, int_window_height/2 + 410, 135, 65, "Stats")
+	button.spawn("img_ui_button_QD", "credits", "menu", int_window_width/2, int_window_height/2 + 410, 135, 65, "Credits")
+	button.spawn("img_ui_button_QD", "options", "menu", int_window_width/2 + 150, int_window_height/2 + 410, 135, 65, "Options")
 --Shop Buttons
 	button.spawn("img_ui_shop_skull_QD", "upgrade1", "shop", int_window_width/2 - 300, int_window_height/2, 258, 258)
 	button.spawn("img_ui_shop_boot_QD", "upgrade2", "shop", int_window_width/2, int_window_height/2, 258, 258)
@@ -94,6 +90,7 @@ function love.load()
 	button.spawn("img_ui_button_QD", "back", "shop", int_window_width/2, int_window_height/2 + 450, 300, 125, "Back")
 --Pause Buttons
 	button.spawn("img_ui_button_QD", "resume", "pause", int_window_width/2, int_window_height/2, 300, 125, "Resume")
+	button.spawn("img_ui_button_QD", "options", "pause", int_window_width/2, int_window_height/2+150, 300, 125, "Options")
 	button.spawn("img_ui_button_QD", "quitSession", "pause", int_window_width/2, int_window_height/2 + 300, 300, 125, "Quit")
 --Credits Buttons
 	button.spawn("img_ui_button_QD", "back", "credits", int_window_width/2 + 300, int_window_height/2 + 430, 300, 125, "Back")
@@ -102,15 +99,15 @@ function love.load()
 --Stats Buttons
 	button.spawn("img_ui_button_QD", "back", "stats", int_window_width/2 + 300, int_window_height/2 + 430, 300, 125, "Back")
 --Options Buttons
-	button.spawn("img_ui_button_QD", "master_vol_up", "options", int_window_width/2+32, int_window_height/2-92, 64, 64, "+")
-	button.spawn("img_ui_button_QD", "master_vol_down", "options", int_window_width/2-40, int_window_height/2-92, 64, 64, "-")
-	button.spawn("img_ui_button_QD", "msc_vol_up", "options", int_window_width/2+32, int_window_height/2+12, 64, 64, "+")
-	button.spawn("img_ui_button_QD", "msc_vol_down", "options", int_window_width/2-40, int_window_height/2+12, 64, 64, "-")
-	button.spawn("img_ui_button_QD", "snd_vol_up", "options", int_window_width/2+32, int_window_height/2+124, 64, 64, "+")
-	button.spawn("img_ui_button_QD", "snd_vol_down", "options", int_window_width/2-40, int_window_height/2+124, 64, 64, "-")
+	button.spawn("img_ui_button_QD", "master_vol_up", "options", int_window_width/2+32, int_window_height/2-92, 64, 64, "+", true)
+	button.spawn("img_ui_button_QD", "master_vol_down", "options", int_window_width/2-40, int_window_height/2-92, 64, 64, "-", true)
+	button.spawn("img_ui_button_QD", "msc_vol_up", "options", int_window_width/2+32, int_window_height/2+12, 64, 64, "+", true)
+	button.spawn("img_ui_button_QD", "msc_vol_down", "options", int_window_width/2-40, int_window_height/2+12, 64, 64, "-", true)
+	button.spawn("img_ui_button_QD", "snd_vol_up", "options", int_window_width/2+32, int_window_height/2+124, 64, 64, "+", true)
+	button.spawn("img_ui_button_QD", "snd_vol_down", "options", int_window_width/2-40, int_window_height/2+124, 64, 64, "-", true)
 	button.spawn("img_ui_button_QD", "backPanel", "options", int_window_width/2 + 300, int_window_height/2 + 430, 300, 125, "Back")
 
-	playMusic("msc_menuscreen", .06)
+	playMusic("msc_menuscreen")
 end
 
 function love.update(dt)
@@ -131,8 +128,8 @@ function love.update(dt)
 			enemy.spawnManager(dt)
 			totalTimeUpdate(dt)
 
-			if love.keyboard.isDown("y") then
-				player.kill(dt, player[1], .5)
+			if love.keyboard.isDown("p") then
+				player.kill(dt, player[1], 1)
 			end
 		end
 	end
@@ -166,9 +163,9 @@ function love.draw()
 		love.graphics.draw(img_map_dungeon, 0, 0)
 
 		player.draw()
-		weapon.draw()
 		consumable.draw()
 		enemy.draw()
+		weapon.draw()
 		end)
 
 		hudDraw()
@@ -283,10 +280,10 @@ function menuDraw()
 
 	love.graphics.setFont(font_title)
 	love.graphics.setColor(0,0,0)
-	love.graphics.printf(str_GAME_NAME, 32 - (font_title:getWidth("Dark Domains")/2)*title_outline_scale, 64, int_window_width, "center", 0, title_outline_scale)
+	love.graphics.printf(str_GAME_NAME, 0 - (font_title:getWidth("Dark Domains")/title_outline_scale)-32, 64, int_window_width, "center", 0, title_outline_scale)
 	
 	love.graphics.setColor(clr_menu_font)
-	love.graphics.printf(str_GAME_NAME, 32 - (font_title:getWidth("Dark Domains")/2)*title_main_scale, 64, int_window_width, "center", 0, title_main_scale)
+	love.graphics.printf(str_GAME_NAME, 0 - (font_title:getWidth("Dark Domains")/title_main_scale)-32, 64, int_window_width, "center", 0, title_main_scale)
 
 	love.graphics.setColor(1,1,1)
 	love.graphics.setFont(font_hudText)
@@ -375,7 +372,7 @@ end
 
 function gameOverDraw()
 	local plr = player[1]
-	local lastKilledBy = str_FoN
+	local lastKilledBy = "the " .. str_FoN
 	--love.graphics.setColor(1,1,1)
 	--love.graphics.draw(img_ui_menu_bg, 0, 0)
 
@@ -393,9 +390,9 @@ function gameOverDraw()
 	--love.graphics.printf("Warrior Kills:", 0, 460, int_window_width, "center")
 
 	if plr.lastHurtBy ~= (str_FoN or nil) then
-		lastKilledBy = plr.lastHurtBy.class.name
+		lastKilledBy = "a " .. plr.lastHurtBy.class.name
 	end
-	love.graphics.printf("You were killed by a " .. lastKilledBy, 0, 620, int_window_width, "center")
+	love.graphics.printf("You were killed by " .. lastKilledBy, 0, 620, int_window_width, "center")
 
 	gameInfoDraw()
 end
@@ -408,6 +405,8 @@ function creditsDraw()
 	local creditsTextR2 = "\n------------\nSound Effects By:\n GameBurp.com"
 	local creditsTextC = "Libraries:\nGamera - Enrique García Cota\nTSerial - Taehl\nResolution Solution - Vovkiv"
 	]]
+
+	local pageTitle = "Credits:"
 	local creditsTextL = "Created By:\nThe Righteous Ringos\n\nGame Design:\nAlex Calvelage\nGunner Braun\n\nProgramming:\nAlex Calvelage\n\nArtwork, Animations, Textures:\nGunner Braun\nAlex Calvelage\n\n"
 	local creditsTextL2 = "------------\nPowered By:\nLove2D 11.3\n\nLibraries Used:\nGamera - Enrique García Cota\nTSerial - Taehl\nResolution Solution - Vovkiv\n\n"
 	local creditsTextR = "Music Used:\nNight Vigil\nKevin MacLeod (incompetech.com)\nLicensed under Creative Commons: By Attribution 3.0\nhttp://creativecommons.org/licenses/by/3.0/\n\nCruising for Goblins\nKevin MacLeod (incompetech.com)\nLicensed under Creative Commons: By Attribution 3.0\nhttp://creativecommons.org/licenses/by/3.0/\n"
@@ -416,9 +415,9 @@ function creditsDraw()
 
 	love.graphics.setColor(clr_menu_font)
 	love.graphics.setFont(font_title)
-	love.graphics.printf("Credits:", 0, 72, int_window_width, "center")
+	love.graphics.printf(pageTitle, 0 + font_title:getWidth(pageTitle)/64, 72, int_window_width, "center")
 	love.graphics.setFont(font_creditsText)
-	love.graphics.printf(creditsTextL .. creditsTextL2, -400, 216, int_window_width, "center")
+	love.graphics.printf(creditsTextL .. creditsTextL2, -420, 216, int_window_width, "center")
 	love.graphics.printf(creditsTextR .. creditsTextR2 .. creditsTextC, 300, 216, int_window_width, "center")
 
 	gameInfoDraw()

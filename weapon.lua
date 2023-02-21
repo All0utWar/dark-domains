@@ -101,6 +101,8 @@ function weapon.update(dt)
 				end
 			end
 		elseif not v.isHeld then
+			checkBoundaries(weapon[i])
+
 			--Relocates weapons so they don't stack ontop of eachother
 			for j = i + 1, #weapon do
 				if checkCircularCollision(weapon[i].x, weapon[i].y, weapon[j].x, weapon[j].y, weapon[i].radius*2, weapon[j].radius*2) then
