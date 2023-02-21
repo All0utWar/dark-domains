@@ -1,0 +1,20 @@
+Created By:
+The Righteous Ringos
+
+Game Design:
+Alex Calvelage
+Gunner Braun
+
+Programming:
+Alex Calvelage
+
+Artwork, Animations, Textures:
+Gunner Braun
+
+Powered By:
+Love2D 11.3
+
+Fonts Used:
+Dungeon Font - vrtxrry 
+Evil Empire - Tup Wanders
+New Rocker - Pablo Impallari, Brenda Gallo, Rodrigo Fuenzalida
