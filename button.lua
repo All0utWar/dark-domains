@@ -62,9 +62,16 @@ function button.draw()
 			--Edge case correction for various buttons
 			if button[i].text ~= nil then
 				local yoffset = 0
-				if #button[i].text >= 5 then
+				local scaleX = 1
+				if button[i].text == "Delete" then
+					yoffset = 4
+				elseif #button[i].text >= 5 then
 					love.graphics.setFont(font_subtitle)
 					yoffset = 12
+					if button[i].text == "Fullscreen" then
+						love.graphics.setFont(font_subbertitle)
+						yoffset = 18
+					end
 				elseif #button[i].text <= 1 then
 					love.graphics.setFont(font_title)
 					yoffset = -45
@@ -73,14 +80,14 @@ function button.draw()
 					yoffset = -6
 				end
 
-				if button[i].text == "Credits" or button[i].text == "Stats" or (button[i].text == "Options" and str_gameState == "menu") then
+				if button[i].text == "Credits" or button[i].text == "Stats" or (button[i].text == "Options" and str_gameState == "menu") or button[i].text == "Delete" then
 					love.graphics.setFont(font_subbertitle)
 				end
 
 				love.graphics.setColor(clr_menu_font)
 
 				--draws button text if available
-				love.graphics.printf(button[i].text, button[i].x, button[i].y + yoffset, button[i].width, "center")
+				love.graphics.printf(button[i].text, button[i].x, button[i].y + yoffset, button[i].width, "center", 0, scaleX)
 			end
 		end
 	end
@@ -138,7 +145,10 @@ function button.clickAction(mButton)
 				elseif action == "resume" then
 					--Will unpause game
 					pauseGame()
-				elseif action == "quitSession" then
+				elseif action == "quitSesh" then
+					button.openPanel(action)
+				elseif action == "quitConfirm" then
+					button.closePanel()
 					switchGameState("menu")
 					finishCurrentGame()
 
@@ -189,6 +199,17 @@ function button.clickAction(mButton)
 					float_sndVolume = changeVolume(float_sndVolume, "-")
 					setNewVolume()
 					saveGame()
+
+				elseif action == "fullscreen" then
+					fullscreenToggle()
+					
+				elseif action == "delete_save" then
+					button.openPanel(action)
+				elseif action == "deleteConfirm" then
+					button.openPanel("options")
+					deleteSave()
+				elseif action == "deleteRefuse" then
+					button.openPanel("options")
 
 				elseif action == "options_keybinds_moveLeft" then
 					start_keybind_change("moveLeft", button[i])

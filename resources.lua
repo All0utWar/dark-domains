@@ -61,6 +61,9 @@ function imageLoad()
 	img_wpn_shortsword = love.graphics.newImage("resources/textures/weapons/broadsword.png")
 	img_wpn_battlestaff = love.graphics.newImage("resources/textures/weapons/broadsword.png")
 
+--Artifacts
+	img_art_chest = love.graphics.newImage("resources/textures/artifacts/chest_closed.png")
+
 --Consumables
 	img_con_coins = love.graphics.newImage("resources/textures/consumables/con_money.png")
 	img_con_healthpotion = love.graphics.newImage("resources/textures/consumables/con_health.png")

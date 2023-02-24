@@ -1,17 +1,18 @@
 
 --Classnames MUST match their respective textures, disregard spacing and capitals
 weapon = {dagger = 			{id = 1, name = "Dagger", damage = 10, damageType = "stab", attackSpeed = .16, attackRange = 8, attackRoF = .33, attackSize = 48, texture = nil, xOffset = 35, yOffset = -100, xOffsetRun = 0, yOffsetRun = 8, rotationAngle = -80},
-			broadsword = 	{id = 2, name = "Broad Sword", damage = 7, damageType = "slash", attackSpeed = .22, attackRange = 16, attackRoF = .66, attackSize = 92, texture = nil, xOffset = -44, yOffset = -20, xOffsetRun = 0, yOffsetRun = 12, rotationAngle = 30},
-			katana = 		{id = 3, name = "Katana", damage = 5, damageType = "slash", attackSpeed = .44, attackRange = 32, attackRoF = .75, attackSize = 136, texture = nil, xOffset = -60, yOffset = 8, xOffsetRun = 0, yOffsetRun = 8, rotationAngle = 30},
+			broadsword = 	{id = 2, name = "Broad Sword", damage = 8, damageType = "slash", attackSpeed = .22, attackRange = 16, attackRoF = .66, attackSize = 92, texture = nil, xOffset = -44, yOffset = -20, xOffsetRun = 0, yOffsetRun = 12, rotationAngle = 30},
+			katana = 		{id = 3, name = "Katana", damage = 6, damageType = "slash", attackSpeed = .44, attackRange = 32, attackRoF = .75, attackSize = 136, texture = nil, xOffset = -60, yOffset = 8, xOffsetRun = 0, yOffsetRun = 8, rotationAngle = 30},
 			shortsword = 	{id = 4, name = "Short Sword", damage = 6, damageType = "stab", attackSpeed = .16, attackRange = 1, attackRoF = .44, attackSize = 64, texture = nil, xOffset = 0, yOffset = 0, xOffsetRun = 0, yOffsetRun = 8, rotationAngle = 30},
 			battlestaff = 	{id = 5, name = "Battlestaff", damage = 25, damageType = "stab", attackSpeed = .44, attackRange = 1, attackRoF = .75, attackSize = 128, texture = nil, xOffset = 0, yOffset = 0, xOffsetRun = 0, yOffsetRun = 8, rotationAngle = 30}
 			}
 
 --This function will create an entry in the weapon table with all of its' relevant stats and gfx options
 function weapon.spawn(class, x, y, initialSpawn, dmg)
-	table.insert(weapon, {class = class, x = x, y = y, width = 0, height = 0, radius = 32, hitBox = {x = 0, y = 0, radius = 0}, damage = 0, rarity = "common",
-							particleRarity = nil, hasFired = false, attackSpeed_timer = 0, rof_timer = 0,
-							isHeld = false, inPickupRange = false, pickupRange = 64, relocateSpeed = 256})
+	table.insert(weapon, {class = class, x = x, y = y, width = 0, height = 0, radius = 32, hitBox = {x = 0, y = 0, radius = 0}, damage = 0,
+							rarity = "common", particleRarity = nil, hasFired = false, attackSpeed_timer = 0,
+							rof_timer = 0, isHeld = false, inPickupRange = false, pickupRange = 64,
+							relocateSpeed = 256, despawnTimer = 30})
 
 	local wpn = weapon[#weapon]
 
@@ -23,7 +24,7 @@ function weapon.spawn(class, x, y, initialSpawn, dmg)
 	--Set width/height
 	weapon[#weapon].width, weapon[#weapon].height = weapon[#weapon].class.texture:getWidth() * 1.5, weapon[#weapon].class.texture:getHeight() * 1.5
 
-	--'Randomize' weapon stats on spawn
+	--'Randomize' weapon stats on spawn1
 	if not initialSpawn then
 		--Set initial weapon damage randomized off of the class it derives from * current difficulty level
 		weapon[#weapon].damage = love.math.random(3, weapon[#weapon].class.damage * (int_difficulty/2))
@@ -101,6 +102,7 @@ function weapon.update(dt)
 				end
 			end
 		elseif not v.isHeld then
+			weapon.despawnUpdate(dt, weapon[i], i)
 			checkBoundaries(weapon[i])
 
 			--Relocates weapons so they don't stack ontop of eachother
@@ -117,7 +119,7 @@ function weapon.update(dt)
 
 		if plr ~= nil then
 			--Weapon Pickup Range check
-			if math.dist(v.x + v.width, v.y + v.height, plr.x + plr.width / 2, plr.y + plr.height / 2) <= v.pickupRange and (not v.isHeld and not plr.isDead) then
+			if math.dist(v.x, v.y + v.height, plr.x + plr.width / 2, plr.y + plr.height / 2) <= v.pickupRange and (not v.isHeld and not plr.isDead) then
 				v.inPickupRange = true
 			else
 				v.inPickupRange = false
@@ -135,7 +137,6 @@ function weapon.draw()
 	for i,v in ipairs(weapon) do
 		if v.class.texture then
 			if v.isHeld then
-				--rotationAngle = math.rad(30)
 				rotationAngle = math.rad(v.class.rotationAngle)
 				xOffset = v.class.xOffset
 				yOffset = v.class.yOffset
@@ -173,7 +174,13 @@ function weapon.draw()
 					love.graphics.setColor(clr_efx_legendary)
 				end
 
-				--love.graphics.draw(img_efx_glow, v.x - (img_efx_glow:getWidth()/3), v.y + 28, 0, .75, .75)
+				--Get current particle colors
+				--local particleColors = v.particleRarity:getColors()
+				--local alphaDespawn = v.despawnTimerMax/(v.despawnTimer*v.despawnTimer)
+				--Set alpha channel to match weapon's alpha for despawn
+				--particleColors[4] = (v.despawnTimer/v.despawnTimer)
+				--v.particleRarity:setColors(particleColors)
+				
 				love.graphics.draw(v.particleRarity, v.x + (v.class.texture:getWidth() + 4), v.y + (v.class.texture:getHeight() + 16), 0, .25, 1)
 			end
 
@@ -182,18 +189,12 @@ function weapon.draw()
 		else
 			love.graphics.setColor(.15, 1, .3)
 			love.graphics.rectangle("fill", v.x, v.y, v.width, v.height)
+
 		end
 
-		--particles
-		if v.isHeld then
-			love.graphics.draw(particle_attack, v.hitBox.x, v.hitBox.y, 0, v.class.attackSize / 100, v.class.attackSize / 100)
+		if not bool_gamePaused then
 			love.graphics.setColor(0, .5, 1)
 			love.graphics.draw(img_ui_crosshair, camMouseX, camMouseY, 0, .75, .75, 32, 32)
-			love.graphics.setColor(1, 1, 1)
-
-			if isDebug then
-				love.graphics.circle("line", v.hitBox.x, v.hitBox.y, v.hitBox.radius)
-			end
 		end
 
 		if isDebug then
@@ -202,8 +203,24 @@ function weapon.draw()
 
 		if v.inPickupRange then
 			--UI for weapon pickup
+			love.graphics.setColor(1, 1, 1)
 			love.graphics.setFont(font_gameText)
-			love.graphics.print("Pickup (" .. v.class.name .. ")\nType: " .. tostring(v.class.damageType) .. "\nDMG: " .. tostring(v.damage) .. "\n", v.x, v.y - 24)
+			love.graphics.print("Pickup (" .. v.class.name .. ")\nType: " .. tostring(v.class.damageType) .. "\nDMG: " .. tostring(v.damage) .. "\n", v.x, v.y - 64)
+		end
+	end
+end
+
+--Draws ontop of enemies
+function weapon.attackEffects()
+	for i,v in ipairs(weapon) do
+		--Attack Particle Effects Draw
+		if v.isHeld then
+			love.graphics.setColor(1, 1, 1)
+			love.graphics.draw(particle_attack, v.hitBox.x, v.hitBox.y, 0, v.class.attackSize / 100, v.class.attackSize / 100)
+		end
+
+		if isDebug then
+			love.graphics.circle("line", v.hitBox.x, v.hitBox.y, v.hitBox.radius)
 		end
 	end
 end
@@ -239,7 +256,9 @@ function weapon.attack(dt, attacker)
 				particle_attack:setLinearAcceleration(-(attacker.x - wpn.hitBox.x), -(attacker.y - wpn.hitBox.y))
 				particle_attack:emit(1)
 
-				weapon.checkHit(attacker, wpn, wpn.hitBox.x, wpn.hitBox.y, wpn.hitBox.radius)
+				--Objects that can be attacked
+				weapon.checkHit(attacker, enemy, wpn, wpn.hitBox.x, wpn.hitBox.y, wpn.hitBox.radius)
+				weapon.checkHit(attacker, artifact, wpn, wpn.hitBox.x, wpn.hitBox.y, wpn.hitBox.radius)
 				
 				wpn.attackSpeed_timer = 0
 				wpn.hasFired = true --Removed so that attack moves with player?
@@ -248,8 +267,8 @@ function weapon.attack(dt, attacker)
 	end
 end
 
-function weapon.checkHit(attacker, wpn, x, y, r)
-	for i,v in ipairs(enemy) do
+function weapon.checkHit(attacker, tbl, wpn, x, y, r)
+	for i,v in ipairs(tbl) do
 		if checkCircularCollision(x, y, v.x, v.y, r, v.class.hitBox.radius) then
 			v.isHurt = true
 			takeDamage(attacker, v, wpn.damage, wpn)
@@ -277,5 +296,14 @@ function weapon.spawnRandom(x, y)
 end
 
 function weapon.spawnInitial(x, y)
-	weapon.spawn(weapon.dagger, x, y, true, love.math.random(3, 5))
+	--weapon.spawn(weapon.dagger, x, y, true, love.math.random(3, 5))
+	--Removed damage cap for initial weapon
+	weapon.spawn(weapon.dagger, x, y)
+end
+
+function weapon.despawnUpdate(dt, wpn, index)
+	wpn.despawnTimer = wpn.despawnTimer - 1 * dt
+	if wpn.despawnTimer <= 0 then
+		table.remove(weapon, index)
+	end
 end

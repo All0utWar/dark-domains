@@ -128,24 +128,3 @@ function consumable.affect(user, con_index)
 		table.remove(consumable, con_index)
 	end
 end
-
---[[
-function weapon.spawnRandom(x, y)
-	local wpnToSpawn = nil
-	local random = 0
-
-	random = love.math.random(1, 3)
-
-	--This part can be cleaned up later..
-	--We only have 3 weapons as of now 2/18/2023
-	if random == 1 then
-		wpnToSpawn = weapon.dagger
-	elseif random == 2 then
-		wpnToSpawn = weapon.broadsword
-	elseif random == 3 then
-		wpnToSpawn = weapon.katana
-	end
-
-	weapon.spawn(wpnToSpawn, x, y)
-end
---]]

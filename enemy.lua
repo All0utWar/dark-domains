@@ -1,14 +1,14 @@
 
-
-enemy = {bat01 = {name = "Bat", id = "01", enemyType = "bat", damage = 2, maxHealth = 7, attackSpeed = .1, attackRange = 60, attackRoF = .2, aggroRange = 6000, moveSpeed = 100, moveAcceleration = 45, width = 36, height = 36, hitBox = {radius = 24}, texture = nil},
+--Attack Range is essentially the size of their hitbox, set as base line and adjust accordingly
+enemy = {bat01 = {name = "Bat", id = "01", enemyType = "bat", damage = 2, maxHealth = 7, attackSpeed = .1, attackRange = 60, attackRoF = .2, aggroRange = 6000, moveSpeed = 150, moveAcceleration = 80, width = 36, height = 36, hitBox = {radius = 24}, texture = nil},
 		bat02 = {name = "Ice Bat", id = "02", enemyType = "bat", damage = 3, maxHealth = 15, attackSpeed = .1, attackRange = 60, attackRoF = .16, aggroRange = 6000, moveSpeed = 100, moveAcceleration = 85, width = 36, height = 36, hitBox = {radius = 24}, texture = nil},
 		bat03 = {name = "Blood Bat", id = "03", enemyType = "bat", damage = 5, maxHealth = 22, attackSpeed = .1, attackRange = 60, attackRoF = .16, aggroRange = 6000, moveSpeed = 100, moveAcceleration = 100, width = 36, height = 36, hitBox = {radius = 24}, texture = nil},
 		
-		zombie01 = {name = "Zombie", id = "01", enemyType = "zombie", damage = 6, maxHealth = 17, attackSpeed = .16, attackRange = 70, attackRoF = .66, aggroRange = 6000, moveSpeed = 200, moveAcceleration = 65, width = 45, height = 90, scale = 3.2, hitBox = {radius = 45}, texture = nil},
+		zombie01 = {name = "Zombie", id = "01", enemyType = "zombie", damage = 6, maxHealth = 17, attackSpeed = .2, attackRange = 70, attackRoF = .66, aggroRange = 6000, moveSpeed = 225, moveAcceleration = 100, width = 45, height = 90, scale = 3.2, hitBox = {radius = 45}, texture = nil},
 		zombie02 = {name = "Rancid Zombie", id = "02", enemyType = "zombie", damage = 8, maxHealth = 25, attackSpeed = .16, attackRange = 70, attackRoF = 1.25, aggroRange = 6000, moveSpeed = 200, moveAcceleration = 100, width = 45, height = 90, scale = 3.2, hitBox = {radius = 45}, texture = nil},
 		zombie03 = {name = "Vengeful Zombie", id = "03", enemyType = "zombie", damage = 16, maxHealth = 35, attackSpeed = .16, attackRange = 70, attackRoF = 1.25, aggroRange = 6000, moveSpeed = 200, moveAcceleration = 125, width = 45, height = 90, scale = 3.2, hitBox = {radius = 45}, texture = nil},
 		
-		ghoul01 = {name = "Spirit", id = "01", enemyType = "ghoul", damage = 8, maxHealth = 25, attackSpeed = .3, attackRange = 80, attackRoF = .66, aggroRange = 6000, moveSpeed = 300, moveAcceleration = 85, width = 50, height = 100, scale = 2, hitBox = {radius = 50}, texture = nil},
+		ghoul01 = {name = "Spirit", id = "01", enemyType = "ghoul", damage = 9, maxHealth = 25, attackSpeed = .35, attackRange = 80, attackRoF = .88, aggroRange = 6000, moveSpeed = 325, moveAcceleration = 150, width = 50, height = 100, scale = 2, hitBox = {radius = 50}, texture = nil},
 		ghoul02 = {name = "Unholy Spirit", id = "02", enemyType = "ghoul", damage = 24, maxHealth = 30, attackSpeed = .16, attackRange = 75, attackRoF = .44, aggroRange = 6000, moveSpeed = 300, moveAcceleration = 150, width = 50, height = 100, scale = 2, hitBox = {radius = 50}, texture = nil},
 		ghoul03 = {name = "Tainted Spirit", id = "03", enemyType = "ghoul", damage = 32, maxHealth = 40, attackSpeed = .16, attackRange = 75, attackRoF = .44, aggroRange = 6000, moveSpeed = 300, moveAcceleration = 200, width = 50, height = 100, scale = 2, hitBox = {radius = 50}, texture = nil},
 
@@ -21,7 +21,7 @@ function enemy.spawn(class, x, y)
 	table.insert(enemy, {archetype = "enemy", class = class, x = x, y = y, xVel = 0, yVel = 0, health = 0, isAttacking = false, isAggro = false, hasFired = false,
 						isAttacking_timer = 0, rof_timer = 0, xDir = -1, yDir = -1, pxDir = 0, pyDir = 0, handx = 0, handy = 0, isDead = false, isHurt = false,
 						isHurt_timer = 0, isHurt_timer_max = .75, state = "idle", animationTable = anim, current_frame = 1,
-						anim_timescale = 8, tick = 0, moveSpeedCap = 0})
+						anim_timescale = 8, tick = 0})
 
 	enemy[#enemy].health = enemy[#enemy].class.maxHealth
 	int_total_enemies = #enemy
@@ -57,8 +57,10 @@ function enemy.update(dt)
 
 			--Prevents enemies from moving after attacking
 			if not v.hasFired then
-				v.x = v.x + v.xDir * (v.xVel * dt)
-				v.y = v.y + v.yDir * (v.yVel * dt)
+				if bool_isAIEnabled then
+					v.x = v.x + v.xDir * (v.xVel * dt)
+					v.y = v.y + v.yDir * (v.yVel * dt)
+				end
 			end
 
 			enemy.collisionResolve(dt)
@@ -121,22 +123,24 @@ function enemy.attack(dt, attacker)
 
 	if plr ~= nil then
 		if not attacker.hasFired then
-			if math.dist(attacker.x + attacker.class.width / 2, attacker.y + attacker.class.height / 2, plr.x + plr.width / 2, plr.y + plr.height / 2) <= attacker.class.attackRange then
+			if math.dist(attacker.x, attacker.y, plr.x + plr.width / 2, plr.y + plr.height / 2) <= attacker.class.attackRange then
 				attacker.isAttacking_timer = attacker.isAttacking_timer + 1 * dt
 			else
 				attacker.isAttacking_timer = 0
 			end
 
 			if attacker.isAttacking_timer >= attacker.class.attackSpeed then
-				if checkCircularCollision(attacker.x + attacker.class.width / 2, attacker.y + attacker.class.height / 2, plr.x + plr.width / 2, plr.y + plr.height / 2, attacker.class.hitBox.radius, plr.radius ) then
+				if checkCircularCollision(attacker.x, attacker.y, plr.x + plr.width / 2, plr.y + plr.height / 2, attacker.class.hitBox.radius, plr.radius ) then
 					takeDamage(attacker, plr, attacker.class.damage)
 
 					if attacker.class.enemyType == "bat" then
-						attacker.xVel = attacker.xVel + 170000 * dt
+						attacker.xVel = attacker.xVel + 180000 * dt
+						
 					elseif attacker.class.enemyType == "zombie" then
 						stateChange(attacker, "attack")
 						attacker.xVel = 0
 						attacker.yVel = 0
+
 					elseif attacker.class.enemyType == "ghoul" then
 						stateChange(attacker, "attack")
 						attacker.xVel = attacker.xVel + 250000 * dt
@@ -157,9 +161,15 @@ function enemy.collisionResolve(dt)
 		local partA = enemy[i]
 		for j = i + 1, #enemy do
 			local partB = enemy[j]
-			if checkCircularCollision(partA.x, partA.y, partB.x, partB.y, partA.class.hitBox.radius, partB.class.hitBox.radius) then
-				partB.xVel = partB.xVel + (partA.class.hitBox.radius / 2) * (dt/3)
-				partB.yVel = partB.yVel + (partA.class.hitBox.radius / 2) * (dt/3)
+			if partA.class.name == partB.class.name then
+				if checkCircularCollision(partA.x, partA.y, partB.x, partB.y, partA.class.hitBox.radius, partB.class.hitBox.radius) then
+					if partA.xVel <= partA.class.moveSpeed then
+						partA.xVel = partA.xVel - (partB.class.hitBox.radius/2) * (dt/10)--12
+					end
+					if partA.yVel <= partA.class.moveSpeed then
+						partA.yVel = partA.yVel - (partB.class.hitBox.radius/2) * (dt/10)
+					end
+				end
 			end
 		end
 	end
@@ -175,19 +185,19 @@ function enemy.spawnManager(dt)
 	end
 	local spawnRadius = 1250 --possibly increase?
 	local spawnDirection = love.math.random(1, 4)
-	local spawnRate = (.25 / int_difficulty) + 1
+	local spawnRate = (.1 / int_difficulty) + 1
 	local spawnConditions = {roll1 = 0, roll2 = 0, roll3 = 0, result = 0}
 	local creatureToSpawn = nil
 
 	--Enemy limits per category
 	local batLimit = 16
-	local batSpawnCondition = 80
+	local batSpawnCondition = 70
 
-	local zombieLimit = 10
-	local zombieSpawnCondition = 120
+	local zombieLimit = 12
+	local zombieSpawnCondition = 125
 
-	local ghoulLimit = 4
-	local ghoulSpawnCondition = 155
+	local ghoulLimit = 8
+	local ghoulSpawnCondition = 170
 
 	local beetleLimit = 6
 	local beetleSpawnCondition = 150
@@ -233,7 +243,7 @@ function enemy.spawnManager(dt)
 	end
 
 	--Spawn enemies according to spawnrate interval
-	if int_total_enemies <= int_max_enemies then
+	if bool_isSpawnerEnabled and int_total_enemies <= int_max_enemies then
 		if isSpawning == false then
 			int_spawnRate_timer = int_spawnRate_timer + 1 * dt
 

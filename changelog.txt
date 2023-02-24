@@ -1,34 +1,41 @@
-Beta 0.2:
--Added more contributors to credits page that we forgot to add
-	*Gamera - Enrique García Cota
-	*TSerial - Taehl
-	*Resolution Solution - Vovkiv
--Added run stats to Game Over screen
--Added tracking of more stats
--Added Stats screen
--Added Options menu
-	*Audio volume settings(Master, Music, Effects)
--Added Options button to Pause Menu
+Beta 0.2.1_pr:
+-Added developer mode
+-Added new object type, "Artifact"
+	*When opened, drops a weapon
+-Added quit confirmation screen when in-game
+-Added button for deleting save game
+-Added despawn timer dropped weapons
+-Added fullscreen setting
 
--Fixed consumables persisting through runs
--Fixed damage scaling on weapons
--Fixed being able to pickup weapons when game is paused
--Fixed cursor being hidden when game is paused and no weapon is equipped
--Fixed gameplay music playing while game is paused
--Fixed gameplay music playing when dead
--Fixed weapons and consumables spawning outside of arena
--Fixed Kill Counter not counting correctly
+-Fixed survival time counting up while player is dead
+-Fixed All Time Kills not counting correctly
+-Fixed weapons drawing on top of enemies, weapon effects now draw on top of enemies
+-Fixed enemies gaining huge amounts of speed when grouped together
+-Fixed misaligned hitboxes on objects
+-Fixed targeting crosshair still tracking when game is paused
 
--Modified weapon rarity to be scaled off base weapon damage
-	*Previously was using set values that some weapons could never obtain)
--Modified weapon damage to be scaled partially off current difficulty
--Modified size of Credits button on Main Menu
--Modified stats of enemies
-	*Bats and Zombies will attack faster
-	*Spirits will attack slower and spawn less frequently
-	*Zombies and Spirits now spawn in slightly later
--Modified enemy to enemy collision resolution
--Modified gameplay music volume
--Modified render so weapons + weapon effects draw over enemies
-
--Removed reference to library that wasn't being used
+-Modified enemy stats
+	*Bat:
+		*Base speed increased (100 to 150)
+		*Acceleration increased (45 to 80)
+		*Attack velocity slightly increased
+	*Zombie:
+		*Base speed increased (200 to 225)
+		*Acceleration increased (65 to 100)
+		*Limit increased (10 to 12)
+		*Attack speed decreased (.16 to .2)
+	*Spirit
+		*Base speed increased (300 to 325)
+		*Acceleration increased (85 to 150)
+		*Limit increased (4 to 8)
+		*Damage increased (8 to 9)
+		*Spawn chance decreased
+		*Attack speed decreased (.3 to .35)
+		*RoF decreased (.66 to .88)
+-Modified enemy spawner
+	*Spawn rate increased
+-Modified draw order for all objects
+-Modified rarity of drops
+	*Added chest drop to enemies
+	*Removed weapon drops from enemies
+	*Potions and Coins slightly more rare

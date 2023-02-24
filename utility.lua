@@ -91,22 +91,6 @@ function playerCheckDirectionChange()
 	end
 end
 
-function AICheckDirectionChange(user)
-	local xDir, yDir = user.xDir, user.yDir
-	local pxDir, pyDir = user.pxDir, user.pyDir
-	if xDir > 0 then
-		if pxDir < 0 then
-			print(xDir, pxDir)
-			return true
-		end
-	elseif xDir < 0 then
-		if pxDir > 0 then
-			print(xDir, pxDir)
-			return true
-		end
-	end
-end
-
 function changeXDirection(user, val)
 	if user.xDir ~= val then
 		user.pxDir = user.xDir
@@ -121,6 +105,39 @@ function changeYDirection(user, val)
 		user.yDir = val
 		user.yVel = 0
 	end
+end
+
+function getMovementIntention(user, index)
+	local intention = {x = 0, y = 0}
+
+	for i = 1, #player do
+		local direction = {x = user.xDir, y = user.yDir}
+		local distance = math.dist(user.x, user.y, player[i].x, player[i].y)
+
+		local targetDistance = 1
+		local springStrength = (distance - targetDistance)
+		intention.x = intention.x + direction.x * springStrength
+		intention.y = intention.y + direction.y * springStrength
+
+	end
+
+	for b = index + 1, #enemy do
+		if user ~= enemy[b] then
+			local direction = {x = user.xDir, y = user.yDir}
+			local distance = math.dist(user.x, user.y, enemy[b].x, enemy[b].y)
+
+			local springStrength = 1.0 / (1.0 + distance * distance * distance)
+			intention.x = intention.x - direction.x * springStrength
+			intention.y = intention.y - direction.y * springStrength
+		end
+	end
+
+	if (((intention.x * intention.x) + (intention.y * intention.y)) < 0.5) then
+		return 0, 0
+	end
+
+
+	return math.normalize(intention.x, intention.y)
 end
 
 function AIMoveController(dt, user)
@@ -157,9 +174,11 @@ function AIMoveController(dt, user)
 
 			if user.xVel <= user.class.moveSpeed then
 				user.xVel = user.xVel + user.class.moveAcceleration * dt
+
 			end
 			if user.yVel <= user.class.moveSpeed then
 				user.yVel = user.yVel + user.class.moveAcceleration * dt
+
 			end
 
 		elseif not user.isAggro then
@@ -196,7 +215,8 @@ function takeDamage(attacker, victims, dmg)
 			end
 		elseif attacker.archetype == "player" then
 			atkr = "player"
-			int_totalKills = statTrack(int_totalKills, 1)
+			int_totalKills = statTrack(int_totalKills, 1)		--Tracks # of kills during run
+			int_allTimeKills = statTrack(int_allTimeKills, 1)	--Tracks # of all time kills
 
 			if attacker.currentWeaponIndex > 0 then
 				local wpn = weapon[attacker.currentWeaponIndex]
@@ -241,6 +261,7 @@ function playerInteractController(dt)
 	local plr = player[1]
 
 	pickupWeapon(plr)
+	interactArtifact(plr)
 end
 
 function pickupWeapon(user)
@@ -282,6 +303,17 @@ function pickupConsumable(user)
 	end
 end
 
+function interactArtifact(user)
+	local x,y = user.x, user.y
+
+	for i,v in ipairs(artifact) do
+		if v.inPickupRange then
+			weapon.spawnRandom(x, y)
+			table.remove(artifact, i)
+		end
+	end
+end
+
 function stateChange(user, state, startFrame)
 	--Changes player state only if a new action has occured.
 	--Checks if the new incoming state is different from the current state
@@ -299,14 +331,15 @@ function dropLoot(user)
 	local x, y = user.x, user.y
 
 	if chance >= 98 then
-		weapon.spawnRandom(x, y)
-	elseif chance >= 92 then
+		artifact.spawn(artifact.chest, x, y)
+	elseif chance >= 96 then
 		consumable.spawn(consumable.health, x, y)
-	elseif chance >= 70 then
+	elseif chance >= 75 then
 		consumable.spawn(consumable.coins, x, y)
 	end
 end
 
+--500, 1000, 1500, 2000, 2500 = 7500
 function upgradeStat(action)
 	local cost = 0
 	local willCharge = true
@@ -350,21 +383,24 @@ function upgradeStat(action)
 end
 
 function checkBoundaries(user, w, h)
-	--Gets supplied width and height if available, otherwise defaults to user values
-	local w = w or user.width
-	local h = h or user.height
-	local wall_width, wall_top, wall_bottom = 72, 32, 116
+	if user ~= nil then
+		
+		--Gets supplied width and height if available, otherwise defaults to user values
+		local w = w or user.width
+		local h = h or user.height
+		local wall_width, wall_top, wall_bottom = 72, 32, 116
 
-	if user.x <= wall_width then
-		user.x = wall_width
-	elseif (user.x + w) + wall_width >= int_world_width then
-		user.x = int_world_width - w - wall_width
-	end
+		if user.x <= wall_width then
+			user.x = wall_width
+		elseif (user.x + w) + wall_width >= int_world_width then
+			user.x = int_world_width - w - wall_width
+		end
 
-	if user.y <= wall_top then
-		user.y = wall_top
-	elseif (user.y + h) + wall_bottom >= int_world_height then
-		user.y = int_world_height - h - wall_bottom
+		if user.y <= wall_top then
+			user.y = wall_top
+		elseif (user.y + h) + wall_bottom >= int_world_height then
+			user.y = int_world_height - h - wall_bottom
+		end
 	end
 end
 
@@ -374,9 +410,19 @@ function startNewGame()
 	playMusic("msc_gameplay")
 	player.spawn(int_world_width / 2, int_world_height / 2)
 
+	--weapon.spawnRandom(int_world_width / 2, int_world_height / 2)
 	weapon.spawnInitial(int_world_width / 2, int_world_height / 2)
 
-	--[[weapon.spawn(weapon.dagger, int_world_width / 2, int_world_height / 2)
+	--[[
+	artifact.spawn(artifact.chest, int_world_width / 2 + 200, int_world_height / 2 + 200)
+	artifact.spawn(artifact.chest, int_world_width / 2 + 200, int_world_height / 2 + 300)
+	artifact.spawn(artifact.chest, int_world_width / 2 + 200, int_world_height / 2 + 400)
+	artifact.spawn(artifact.chest, int_world_width / 2 + 200, int_world_height / 2 + 500)
+	artifact.spawn(artifact.chest, int_world_width / 2 + 200, int_world_height / 2 + 600)
+	--]]
+
+	--[[
+	weapon.spawn(weapon.dagger, int_world_width / 2, int_world_height / 2)
 	weapon.spawn(weapon.broadsword, int_world_width / 2 + 100, int_world_height / 2)
 	weapon.spawn(weapon.katana, int_world_width / 2, int_world_height / 2 + 100)
 
@@ -401,9 +447,9 @@ function finishCurrentGame()
 end
 
 function initialGameSettings()
-	float_masterVolume = 1		--Audio Settings
-	float_mscVolume = 0.5		--Audio Settings
-	float_sndVolume = 0.5		--Audio Settings
+	float_masterVolume = 0.8	--Audio Settings
+	float_mscVolume = 0.2		--Audio Settings
+	float_sndVolume = 0.1		--Audio Settings
 	setNewVolume()
 
 	int_stats_max = 5			--STATIC
@@ -505,6 +551,17 @@ function pauseGame()
 	end
 end
 
+function fullscreenToggle()
+	if bool_isFullscreen then
+		bool_isFullscreen = false
+	else
+		bool_isFullscreen = true
+	end
+
+	rs.setMode(int_user_window_width, int_user_window_height, {resizable = true})
+	love.window.setFullscreen(bool_isFullscreen)
+end
+
 function saveGame()
 	local plr = player[1]
 	local data = {masterVolume = float_masterVolume,
@@ -556,6 +613,16 @@ function loadGame()
 		int_totalDeaths = data.allDeaths or 0
 		int_totalRuns = data.allRuns or 0
 		int_totalCoins = data.totalCoins or 0
+	end
+end
+
+function deleteSave()
+	local file = love.filesystem.getInfo("save.ini")
+
+	if file then
+		local data = love.filesystem.remove("save.ini")
+		initialGameSettings()
+		reloadGameSettings()
 	end
 end
 
@@ -744,4 +811,13 @@ function checkCircularCollision(ax, ay, bx, by, ar, br)
 	local dy = by - ay
 	local dist = math.sqrt(dx * dx + dy * dy)
 	return dist < ar + br
+end
+
+function math.normalize(x,y)
+	local l=(x*x+y*y)^.5
+	if l==0 then
+		return 0,0,0
+	else 
+		return x/l,y/l,l 
+	end
 end
