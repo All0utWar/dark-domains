@@ -1,12 +1,12 @@
 
 --Classnames MUST match their respective textures, disregard spacing and capitals
-artifact = {chest = 		{id = 1, name = "Chest", maxHealth = 10, width = 72, height = 48, scale = 3.5, hitBox = {radius = 42}, texture = nil},
+artifact = {chest = 		{id = 1, name = "Chest", maxHealth = 10, width = 72, height = 48, scale = 1.5, hitBox = {radius = 26}, texture = nil},
 				}
 
 --This function will create an entry in the artifact table with all of its' relevant stats and gfx options
 function artifact.spawn(class, x, y)
 	table.insert(artifact, {archetype = "artifact", class = class, x = x, y = y, health = 0,
-							isDead = false, inPickupRange = false, pickupRange = 72})
+							isDead = false, inPickupRange = false, pickupRange = 52})
 
 	--Auto-fix for nil textures when loading classes
 	local str = string.gsub(artifact[#artifact].class.name, "%s+", "")

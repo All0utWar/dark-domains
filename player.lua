@@ -79,15 +79,17 @@ function player.draw()
 		love.graphics.setColor(1, 1, 1)
 		love.graphics.draw(v.animationTable[v.current_frame], v.x + (v.width / 2), v.y - 10, 0, -v.dir * 2, 2, v.animationTable[v.current_frame]:getWidth() / 2)
 		
-		if v.currentWeaponIndex > 0 then
+		if v.currentWeapon > 0 then
+			local plrWep = weapon.getWeapon(v.currentWeapon)
+			
 			if v.isAttacking then
 				--Attack Charge bar
 				love.graphics.setColor(0, 0, 0, .7)
 				love.graphics.rectangle("fill", v.x - v.width / 2, v.y + v.height + 12, 100, 7)
 
 				love.graphics.setColor(.9, .9, .9, .7)
-				love.graphics.draw(weapon[v.currentWeaponIndex].class.texture, v.x - v.width / 2 - 16, v.y + v.height, 0, .65, .65)
-				love.graphics.rectangle("fill", v.x - v.width / 2, v.y + v.height + 12, math.clamp(((weapon[v.currentWeaponIndex].attackSpeed_timer*100) / (weapon[v.currentWeaponIndex].class.attackSpeed)), 0, (weapon[v.currentWeaponIndex].class.attackSpeed*100000)), 7)
+				love.graphics.draw(plrWep.class.texture, v.x - v.width / 2 - 16, v.y + v.height, 0, .65, .65)
+				love.graphics.rectangle("fill", v.x - v.width / 2, v.y + v.height + 12, math.clamp(((plrWep.attackSpeed_timer*100) / (plrWep.class.attackSpeed)), 0, (plrWep.class.attackSpeed*100000)), 7)
 			end
 		end
 
@@ -120,9 +122,9 @@ function player.hud(user)
 	local wpn = nil
 
 	--Get the player's current weapon to draw to screen
-	if user.currentWeaponIndex > 0 then
-		wpn = weapon[user.currentWeaponIndex]
-		wpnImg = weapon[user.currentWeaponIndex].class.texture
+	if user.currentWeapon > 0 then
+		wpn = weapon.getWeapon(player[1].currentWeapon)
+		wpnImg = wpn.class.texture
 	end
 
 	love.graphics.setColor(1, 1, 1)

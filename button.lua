@@ -32,7 +32,7 @@ function button.update(dt)
 end
 
 function button.draw()
-	--Fixes spritebatch force clearing itself when sharing screen on Discord
+	--Force clear spritebatch to prevent render errors
 	if bool_gameFocus then
 		--Clears our spritebatch draw call
 		sb_ui_button:clear()
@@ -204,11 +204,17 @@ function button.clickAction(mButton)
 					fullscreenToggle()
 					
 				elseif action == "delete_save" then
-					button.openPanel(action)
+					if str_gameState == "menu" then
+						button.openPanel(action)
+					else
+						button.openPanel("error")
+					end
 				elseif action == "deleteConfirm" then
 					button.openPanel("options")
 					deleteSave()
 				elseif action == "deleteRefuse" then
+					button.openPanel("options")
+				elseif action == "okay" then
 					button.openPanel("options")
 
 				elseif action == "options_keybinds_moveLeft" then

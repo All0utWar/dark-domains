@@ -1,3 +1,4 @@
+local int_totalWeapons = 3
 
 --Classnames MUST match their respective textures, disregard spacing and capitals
 weapon = {dagger = 			{id = 1, name = "Dagger", damage = 10, damageType = "stab", attackSpeed = .16, attackRange = 8, attackRoF = .33, attackSize = 48, texture = nil, xOffset = 35, yOffset = -100, xOffsetRun = 0, yOffsetRun = 8, rotationAngle = -80},
@@ -12,7 +13,7 @@ function weapon.spawn(class, x, y, initialSpawn, dmg)
 	table.insert(weapon, {class = class, x = x, y = y, width = 0, height = 0, radius = 32, hitBox = {x = 0, y = 0, radius = 0}, damage = 0,
 							rarity = "common", particleRarity = nil, hasFired = false, attackSpeed_timer = 0,
 							rof_timer = 0, isHeld = false, inPickupRange = false, pickupRange = 64,
-							relocateSpeed = 256, despawnTimer = 30})
+							relocateSpeed = 256, despawnTimer = 30, despawnTimerMax = 30})
 
 	local wpn = weapon[#weapon]
 
@@ -102,7 +103,6 @@ function weapon.update(dt)
 				end
 			end
 		elseif not v.isHeld then
-			weapon.despawnUpdate(dt, weapon[i], i)
 			checkBoundaries(weapon[i])
 
 			--Relocates weapons so they don't stack ontop of eachother
@@ -111,6 +111,11 @@ function weapon.update(dt)
 					weapon[j].x = weapon[j].x + weapon[j].relocateSpeed * dt
 					weapon[j].y = weapon[j].y + weapon[j].relocateSpeed * dt
 				end
+			end
+
+			v.despawnTimer = v.despawnTimer - 1 * dt
+			if v.despawnTimer <= 0 then
+				table.remove(weapon, i)
 			end
 		end
 
@@ -175,19 +180,19 @@ function weapon.draw()
 				end
 
 				--Get current particle colors
-				--local particleColors = v.particleRarity:getColors()
-				--local alphaDespawn = v.despawnTimerMax/(v.despawnTimer*v.despawnTimer)
+				local particleColors = v.particleRarity:getColors()
+				--local alphaDespawn = v.despawnTimer/v.despawnTimerMax)
 				--Set alpha channel to match weapon's alpha for despawn
-				--particleColors[4] = (v.despawnTimer/v.despawnTimer)
-				--v.particleRarity:setColors(particleColors)
+				particleColors[4] = (v.despawnTimer/v.despawnTimerMax)
+				v.particleRarity:setColors(particleColors)
 				
 				love.graphics.draw(v.particleRarity, v.x + (v.class.texture:getWidth() + 4), v.y + (v.class.texture:getHeight() + 16), 0, .25, 1)
 			end
 
-			love.graphics.setColor(1, 1, 1)
+			love.graphics.setColor(1, 1, 1, v.despawnTimer/v.despawnTimerMax)
 			love.graphics.draw(v.class.texture, v.x + (v.class.texture:getWidth() / 2) - (xOffset + xAnim) * dir, v.y + (v.class.texture:getHeight() / 2) - (yOffset - yAnim) - yOffsetRun, rotationAngle * dir, 1.5 * dir, 1.5)
 		else
-			love.graphics.setColor(.15, 1, .3)
+			love.graphics.setColor(.15, 1, .3, v.despawnTimer/v.despawnTimerMax)
 			love.graphics.rectangle("fill", v.x, v.y, v.width, v.height)
 
 		end
@@ -228,8 +233,8 @@ end
 --Base attack functionality for all weapons
 function weapon.attack(dt, attacker)
 	--Get local instance of attackers current weapon
-	local wpn = weapon[attacker.currentWeaponIndex]
-
+	local wpn = weapon.getWeapon(attacker.currentWeapon)
+	
 	if wpn ~= nil and wpn.isHeld then
 		if not wpn.hasFired then
 			if attacker.isAttacking then
@@ -258,7 +263,6 @@ function weapon.attack(dt, attacker)
 
 				--Objects that can be attacked
 				weapon.checkHit(attacker, enemy, wpn, wpn.hitBox.x, wpn.hitBox.y, wpn.hitBox.radius)
-				weapon.checkHit(attacker, artifact, wpn, wpn.hitBox.x, wpn.hitBox.y, wpn.hitBox.radius)
 				
 				wpn.attackSpeed_timer = 0
 				wpn.hasFired = true --Removed so that attack moves with player?
@@ -280,7 +284,7 @@ function weapon.spawnRandom(x, y)
 	local wpnToSpawn = nil
 	local random = 0
 
-	random = love.math.random(1, 3)
+	random = love.math.random(1, int_totalWeapons)
 
 	--This part can be cleaned up later..
 	--We only have 3 weapons as of now 2/18/2023
@@ -301,9 +305,12 @@ function weapon.spawnInitial(x, y)
 	weapon.spawn(weapon.dagger, x, y)
 end
 
-function weapon.despawnUpdate(dt, wpn, index)
-	wpn.despawnTimer = wpn.despawnTimer - 1 * dt
-	if wpn.despawnTimer <= 0 then
-		table.remove(weapon, index)
+--Returns weapon instead of index, this prevents sorting errors when removing weapons
+function weapon.getWeapon(id)
+	for i,v in ipairs(weapon) do
+		if v.class.id == id and v.isHeld then
+			--print(i, v.class.id, v.class.name, v.damage)
+			return v
+		end
 	end
 end

@@ -22,9 +22,9 @@ require "artifact"
 local utf8 = require("utf8")
 
 function love.load()
-	str_BUILD_VERSION = "0.2.1pr"
-	str_BUILD_DATE = "02/24/2023"
-	str_LOVE_VERSION = "11.3"
+	str_BUILD_VERSION = "0.2.2.1pr"
+	str_BUILD_DATE = "02/26/2023"
+	str_LOVE_VERSION = "Recommended: 11.4"
 	str_GAME_NAME = "Dark\nDomains"
 	love.window.setTitle("Dark Domains | " .. str_BUILD_VERSION)
 	str_FoN = "Dungeon Keepers"
@@ -117,6 +117,7 @@ function love.load()
 	button.spawn("img_ui_button_QD", "deleteConfirm", "delete_save", int_window_width/2-175, int_window_height/2+102, 300, 125, "Yes")
 	button.spawn("img_ui_button_QD", "deleteRefuse", "delete_save", int_window_width/2+175, int_window_height/2+102, 300, 125, "No")
 	button.spawn("img_ui_button_QD", "backPanel", "options", int_window_width/2 + 300, int_window_height/2 + 430, 300, 125, "Back")
+	button.spawn("img_ui_button_QD", "okay", "error", int_window_width/2, int_window_height/2+102, 300, 125, "Okay")
 --Quit Confirmation Buttons
 	button.spawn("img_ui_button_QD", "quitConfirm", "quitSesh", int_window_width/2-175, int_window_height/2+102, 300, 125, "Yes")
 	button.spawn("img_ui_button_QD", "backPanel", "quitSesh", int_window_width/2+175, int_window_height/2+102, 300, 125, "No")
@@ -166,6 +167,7 @@ function love.draw()
 	if str_gameState == "menu" then
 		menuDraw()
 		optionsDraw()
+		errorPanelDraw()
 		deleteSaveDraw()
 
 	elseif str_gameState == "shop" then
@@ -180,14 +182,16 @@ function love.draw()
 
 		artifact.draw()
 		consumable.draw()
-		weapon.draw()
 		player.draw()
+		weapon.draw()
+		
 		enemy.draw()
 		weapon.attackEffects()
 		end)
 
 		hudDraw()
 		optionsDraw()
+		errorPanelDraw()
 		quitSeshDraw()
 
 	elseif str_gameState == "gameOver" then
@@ -247,11 +251,13 @@ function love.keypressed(key)
 			else
 				bool_isAIEnabled = true
 			end
-		elseif key == "8" then
+		elseif key == "7" or key == "kp7" then
+			artifact.spawn(artifact.chest, player[1].x, player[1].y)
+		elseif key == "8" or key == "kp8" then
 			enemy.spawn(enemy.bat01, player[1].x + 200, player[1].y)
-		elseif key == "9" then
+		elseif key == "9" or key == "kp9" then
 			enemy.spawn(enemy.zombie01, player[1].x + 200, player[1].y)
-		elseif key == "0" then
+		elseif key == "0" or key == "kp0" then
 			enemy.spawn(enemy.ghoul01, player[1].x + 200, player[1].y)
 		end
 	end
@@ -324,12 +330,14 @@ function menuDraw()
 	love.graphics.setColor(1,1,1)
 	love.graphics.draw(img_ui_menu_bg, 0, 0)
 
-	love.graphics.setFont(font_title)
-	love.graphics.setColor(0,0,0)
-	love.graphics.printf(str_GAME_NAME, 0 - (font_title:getWidth("Dark Domains")/title_outline_scale)-32, 64, int_window_width, "center", 0, title_outline_scale)
-	
-	love.graphics.setColor(clr_menu_font)
-	love.graphics.printf(str_GAME_NAME, 0 - (font_title:getWidth("Dark Domains")/title_main_scale)-32, 64, int_window_width, "center", 0, title_main_scale)
+	if str_panelOpen == "" then
+		love.graphics.setFont(font_title)
+		love.graphics.setColor(0,0,0)
+		love.graphics.printf(str_GAME_NAME, 0 - (font_title:getWidth("Dark Domains")/title_outline_scale)-32, 64, int_window_width, "center", 0, title_outline_scale)
+		
+		love.graphics.setColor(clr_menu_font)
+		love.graphics.printf(str_GAME_NAME, 0 - (font_title:getWidth("Dark Domains")/title_main_scale)-32, 64, int_window_width, "center", 0, title_main_scale)
+	end
 
 	love.graphics.setColor(1,1,1)
 	love.graphics.setFont(font_hudText)
@@ -506,6 +514,7 @@ function optionsDraw()
 		love.graphics.printf("Music Volume: " .. float_mscVolume, 0, int_window_height/2-55, int_window_width, "center")
 		love.graphics.printf("Effects Volume: " .. float_sndVolume, 0, int_window_height/2+55, int_window_width, "center")
 		love.graphics.printf("Fullscreen: " .. tostring(bool_isFullscreen), 0, int_window_height/2+176, int_window_width, "center")
+		love.graphics.printf("Delete Savegame: ", 0, int_window_height/2+336, int_window_width, "center")
 	end
 end
 
@@ -537,21 +546,36 @@ function deleteSaveDraw()
 	end
 end
 
+function errorPanelDraw()
+	if str_panelOpen == "error" then
+		love.graphics.setColor(0, 0, 0, 0.85)
+		love.graphics.rectangle("fill", int_window_width/2-512, int_window_height/2-300, 1024, 512, 32, 32)
+		--love.graphics.draw(img_ui_hp_bar_empty, int_window_width/2-(img_ui_hp_bar_empty:getWidth()*8), int_window_height - 820, 0, 16, 92)
+		love.graphics.setColor(clr_menu_font)
+		love.graphics.setFont(font_title)
+		love.graphics.printf("Error!", 0, 256, int_window_width, "center")
+
+		love.graphics.setFont(font_creditsText)
+		love.graphics.printf("You can't perform this action here!", 0, int_window_height/2-48, int_window_width, "center")
+	end
+end
+
 function devModeDraw()
 	local str_title = "Developer Mode (Toggles)"
 	local str1 = "\n[~]Debug: " .. tostring(isDebug)
 	local str2 = "\n[1]Spawner: " .. tostring(bool_isSpawnerEnabled)
 	local str3 = "\n[2]AI: " .. tostring(bool_isAIEnabled)
 	local str4 = "\n\nSpawn Object"
-	local str5 = "\n[8]bat01"
-	local str6 = "\n[9]zombie01"
-	local str7 = "\n[0]ghoul01"
+	local str5 = "\n[7]chest"
+	local str6 = "\n[8]bat01"
+	local str7 = "\n[9]zombie01"
+	local str8 = "\n[0]ghoul01"
 	if bool_isDevMode then
 		love.graphics.setColor(0,0,0, 0.35)
-		love.graphics.rectangle("fill", int_window_width-336, 16, 316, 300, 24, 24)
+		love.graphics.rectangle("fill", int_window_width-336, 16, 316, 336, 24, 24)
 		love.graphics.setColor(1,1,1, 0.85)
 		love.graphics.setFont(font_hudText)
 		love.graphics.printf(str_title, -32, 24, int_window_width, "right")
-		love.graphics.printf(str1 .. str2 .. str3 .. str4 .. str5 .. str6 .. str7, -92, 24, int_window_width, "right")
+		love.graphics.printf(str1 .. str2 .. str3 .. str4 .. str5 .. str6 .. str7 .. str8, -92, 24, int_window_width, "right")
 	end
 end

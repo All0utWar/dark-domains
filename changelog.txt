@@ -1,4 +1,23 @@
-Beta 0.2.1_pr:
+Beta 0.2.2.1pr:
+-Fixed game crash when player dies
+-Fixed game crash when attempting to delete save file in-game
+-Fixed game title appearing behind Options menu panel
+
+BALANCE:
+-Increased rarity of coins slightly
+
+------------------------------------------------
+Beta 0.2.2pr:
+-Fixed game crash when weapons would be removed
+-Fixed possible game crash when no weapon was equipped
+-Fixed numpad keys not working in developer mode
+-Fixed weapons from chests spawning on player position rather than the chest's (still slightly offset)
+-Fixed weapon despawn fadeout not working correctly
+
+-Changed sprite for chest
+
+------------------------------------------------
+Beta 0.2.1pr:
 -Added developer mode
 -Added new object type, "Artifact"
 	*When opened, drops a weapon
@@ -39,3 +58,39 @@ Beta 0.2.1_pr:
 	*Added chest drop to enemies
 	*Removed weapon drops from enemies
 	*Potions and Coins slightly more rare
+
+------------------------------------------------
+Beta 0.2.0pr
+-Added more contributors to credits page that we forgot to add
+	*Gamera - Enrique García Cota
+	*TSerial - Taehl
+	*Resolution Solution - Vovkiv
+-Added run stats to Game Over screen
+-Added tracking of more stats
+-Added Stats screen
+-Added Options menu
+	*Audio volume settings(Master, Music, Effects)
+-Added Options button to Pause Menu
+
+-Fixed consumables persisting through runs
+-Fixed damage scaling on weapons
+-Fixed being able to pickup weapons when game is paused
+-Fixed cursor being hidden when game is paused and no weapon is equipped
+-Fixed gameplay music playing while game is paused
+-Fixed gameplay music playing when dead
+-Fixed weapons and consumables spawning outside of arena
+-Fixed Kill Counter not counting correctly
+
+-Modified weapon rarity to be scaled off base weapon damage
+	*Previously was using set values that some weapons could never obtain)
+-Modified weapon damage to be scaled partially off current difficulty
+-Modified size of Credits button on Main Menu
+-Modified stats of enemies
+	*Bats and Zombies will attack faster
+	*Spirits will attack slower and spawn less frequently
+	*Zombies and Spirits now spawn in slightly later
+-Modified enemy to enemy collision resolution
+-Modified gameplay music volume
+-Modified render so weapons + weapon effects draw over enemies
+
+-Removed reference to library that wasn't being used

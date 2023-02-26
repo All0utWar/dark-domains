@@ -219,7 +219,8 @@ function takeDamage(attacker, victims, dmg)
 			int_allTimeKills = statTrack(int_allTimeKills, 1)	--Tracks # of all time kills
 
 			if attacker.currentWeaponIndex > 0 then
-				local wpn = weapon[attacker.currentWeaponIndex]
+				local wpn = weapon.getWeapon(attacker.currentWeapon)
+
 
 				if wpn.class.damageType == "stab" then
 					int_totalStabKills = statTrack(int_totalStabKills, 1)
@@ -274,24 +275,25 @@ function pickupWeapon(user)
 
 			--Pickup new weapon and stop+reset rarity effects
 			user.currentWeapon = v.class.id
-			if v.class.id == user.currentWeapon then
-				user.currentWeaponIndex = i
-				v.particleRarity:stop()
-				v.particleRarity:reset()
-				v.isHeld = true
-			end
+			--user.currentWeaponIndex = i --Use weapon.getWeapon()
+			v.particleRarity:stop()
+			v.particleRarity:reset()
+			v.isHeld = true
+			v.despawnTimer = v.despawnTimerMax
 		end
 	end
 end
 
 function dropWeapon(user)
 	--Drop Held weapon and kickstart rarity effects again
-	if user.currentWeapon > 0 then
-		weapon[user.currentWeaponIndex].x = user.x
-		weapon[user.currentWeaponIndex].y = user.y
-
-		weapon[user.currentWeaponIndex].isHeld = false
-		weapon[user.currentWeaponIndex].particleRarity:start()
+	for i,v in ipairs(weapon) do
+		if v.isHeld then
+			user.currentWeapon = 0
+			v.x = user.x
+			v.y = user.y
+			v.isHeld = false
+			v.particleRarity:start()
+		end
 	end
 end
 
@@ -308,7 +310,7 @@ function interactArtifact(user)
 
 	for i,v in ipairs(artifact) do
 		if v.inPickupRange then
-			weapon.spawnRandom(x, y)
+			weapon.spawnRandom(v.x-v.class.width/2, v.y-v.class.height/2)
 			table.remove(artifact, i)
 		end
 	end
@@ -334,7 +336,7 @@ function dropLoot(user)
 		artifact.spawn(artifact.chest, x, y)
 	elseif chance >= 96 then
 		consumable.spawn(consumable.health, x, y)
-	elseif chance >= 75 then
+	elseif chance >= 80 then
 		consumable.spawn(consumable.coins, x, y)
 	end
 end
@@ -412,6 +414,10 @@ function startNewGame()
 
 	--weapon.spawnRandom(int_world_width / 2, int_world_height / 2)
 	weapon.spawnInitial(int_world_width / 2, int_world_height / 2)
+	--weapon.spawnRandom(int_world_width / 2+100, int_world_height / 2)
+
+	--artifact.spawn(artifact.chest, int_world_width / 2 + 200, int_world_height / 2 + 200)
+	--artifact.spawn(artifact.chest, int_world_width / 2 + 200, int_world_height / 2 + 500)
 
 	--[[
 	artifact.spawn(artifact.chest, int_world_width / 2 + 200, int_world_height / 2 + 200)
