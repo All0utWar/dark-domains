@@ -101,6 +101,24 @@ function imageLoad()
 		img_plr_run[7] = love.graphics.newImage("resources/textures/player/run/7.png")
 		img_plr_run[8] = love.graphics.newImage("resources/textures/player/run/8.png")
 
+--Gore
+	img_gore_splat = {}
+	img_gore_splat[1] = love.graphics.newImage("resources/textures/enemies/gore/1.png")
+	img_gore_splat[2] = love.graphics.newImage("resources/textures/enemies/gore/2.png")
+	img_gore_splat[3] = love.graphics.newImage("resources/textures/enemies/gore/3.png")
+	img_gore_splat[4] = love.graphics.newImage("resources/textures/enemies/gore/4.png")
+	img_gore_splat[5] = love.graphics.newImage("resources/textures/enemies/gore/5.png")
+	img_gore_splat[6] = love.graphics.newImage("resources/textures/enemies/gore/6.png")
+	img_gore_splat[7] = love.graphics.newImage("resources/textures/enemies/gore/7.png")
+	img_gore_splat[8] = love.graphics.newImage("resources/textures/enemies/gore/8.png")
+	img_gore_splat[9] = love.graphics.newImage("resources/textures/enemies/gore/9.png")
+	img_gore_splat[10] = love.graphics.newImage("resources/textures/enemies/gore/10.png")
+	img_gore_splat[11] = love.graphics.newImage("resources/textures/enemies/gore/11.png")
+	img_gore_splat[12] = love.graphics.newImage("resources/textures/enemies/gore/12.png")
+	img_gore_splat[13] = love.graphics.newImage("resources/textures/enemies/gore/13.png")
+	img_gore_splat[14] = love.graphics.newImage("resources/textures/enemies/gore/14.png")
+	img_gore_splat[15] = love.graphics.newImage("resources/textures/enemies/gore/15.png")
+
 --Enemies
 	img_foe_bat01_run = {}
 	img_foe_bat01_run[1] = love.graphics.newImage("resources/textures/enemies/bat/01/1.png")
@@ -196,20 +214,28 @@ function imageLoad()
 		img_foe_ghoul01_attack[6] = love.graphics.newImage("resources/textures/enemies/ghoul/run/01/6.png")
 
 	img_foe_ghoul02_run = {}
-	img_foe_ghoul02_run[1] = love.graphics.newImage("resources/textures/enemies/ghoul/run/02/1.png")
-		img_foe_ghoul02_run[2] = love.graphics.newImage("resources/textures/enemies/ghoul/run/02/2.png")
-		img_foe_ghoul02_run[3] = love.graphics.newImage("resources/textures/enemies/ghoul/run/02/3.png")
-		img_foe_ghoul02_run[4] = love.graphics.newImage("resources/textures/enemies/ghoul/run/02/4.png")
-		img_foe_ghoul02_run[5] = love.graphics.newImage("resources/textures/enemies/ghoul/run/02/5.png")
-		img_foe_ghoul02_run[6] = love.graphics.newImage("resources/textures/enemies/ghoul/run/02/6.png")
+	img_foe_ghoul02_run[1] = love.graphics.newImage("resources/textures/enemies/ghoul/run/02/4.png")
+		img_foe_ghoul02_run[2] = love.graphics.newImage("resources/textures/enemies/ghoul/run/02/5.png")
+
+	img_foe_ghoul02_attack = {}
+	img_foe_ghoul02_attack[1] = love.graphics.newImage("resources/textures/enemies/ghoul/run/02/1.png")
+		img_foe_ghoul02_attack[2] = love.graphics.newImage("resources/textures/enemies/ghoul/run/02/2.png")
+		img_foe_ghoul02_attack[3] = love.graphics.newImage("resources/textures/enemies/ghoul/run/02/3.png")
+		img_foe_ghoul02_attack[4] = love.graphics.newImage("resources/textures/enemies/ghoul/run/02/4.png")
+		img_foe_ghoul02_attack[5] = love.graphics.newImage("resources/textures/enemies/ghoul/run/02/5.png")
+		img_foe_ghoul02_attack[6] = love.graphics.newImage("resources/textures/enemies/ghoul/run/02/6.png")
 
 	img_foe_ghoul03_run = {}
-	img_foe_ghoul03_run[1] = love.graphics.newImage("resources/textures/enemies/ghoul/run/03/1.png")
-		img_foe_ghoul03_run[2] = love.graphics.newImage("resources/textures/enemies/ghoul/run/03/2.png")
-		img_foe_ghoul03_run[3] = love.graphics.newImage("resources/textures/enemies/ghoul/run/03/3.png")
-		img_foe_ghoul03_run[4] = love.graphics.newImage("resources/textures/enemies/ghoul/run/03/4.png")
-		img_foe_ghoul03_run[5] = love.graphics.newImage("resources/textures/enemies/ghoul/run/03/5.png")
-		img_foe_ghoul03_run[6] = love.graphics.newImage("resources/textures/enemies/ghoul/run/03/6.png")
+	img_foe_ghoul03_run[1] = love.graphics.newImage("resources/textures/enemies/ghoul/run/03/4.png")
+		img_foe_ghoul03_run[2] = love.graphics.newImage("resources/textures/enemies/ghoul/run/03/5.png")
+
+	img_foe_ghoul03_attack = {}
+	img_foe_ghoul03_attack[1] = love.graphics.newImage("resources/textures/enemies/ghoul/run/03/1.png")
+		img_foe_ghoul03_attack[2] = love.graphics.newImage("resources/textures/enemies/ghoul/run/03/2.png")
+		img_foe_ghoul03_attack[3] = love.graphics.newImage("resources/textures/enemies/ghoul/run/03/3.png")
+		img_foe_ghoul03_attack[4] = love.graphics.newImage("resources/textures/enemies/ghoul/run/03/4.png")
+		img_foe_ghoul03_attack[5] = love.graphics.newImage("resources/textures/enemies/ghoul/run/03/5.png")
+		img_foe_ghoul03_attack[6] = love.graphics.newImage("resources/textures/enemies/ghoul/run/03/6.png")
 
 	img_foe_warrior01_run = {}
 	img_foe_warrior01_run[1] = love.graphics.newImage("resources/textures/enemies/warrior/run/01/1.png")

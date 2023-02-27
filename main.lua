@@ -22,8 +22,8 @@ require "artifact"
 local utf8 = require("utf8")
 
 function love.load()
-	str_BUILD_VERSION = "0.2.2.1pr"
-	str_BUILD_DATE = "02/26/2023"
+	str_BUILD_VERSION = "0.2.3.1pr"
+	str_BUILD_DATE = "02/27/2023"
 	str_LOVE_VERSION = "Recommended: 11.4"
 	str_GAME_NAME = "Dark\nDomains"
 	love.window.setTitle("Dark Domains | " .. str_BUILD_VERSION)
@@ -311,8 +311,9 @@ function totalTimeUpdate(dt)
 		end
 
 	--Checks when timer reaches the minute mark
+	--Increments difficulty when below threshold
 	elseif math.floor(math.mod(int_totalTime,60)) == 59 then
-		if not bool_difficultyChanged and int_difficulty < 5 then
+		if not bool_difficultyChanged and int_difficulty < 7 then
 			bool_difficultyChanged = true
 			int_difficulty = int_difficulty + 1
 			--print(tostring(int_difficulty))
@@ -429,6 +430,18 @@ end
 function gameOverDraw()
 	local plr = player[1]
 	local lastKilledBy = "the " .. str_FoN
+	local seconds_zero = "0"
+	local minutes_zero = seconds_zero
+
+	--Extra formating for seconds timer
+	if math.floor(math.mod(int_totalTime,60)) > 9 then
+		seconds_zero = ""
+	end
+	--Extra formating for minutes timer
+	if math.floor(math.mod(int_totalTime, 3600)/60) > 9 then
+		minutes_zero = ""
+	end
+
 	--love.graphics.setColor(1,1,1)
 	--love.graphics.draw(img_ui_menu_bg, 0, 0)
 
@@ -451,7 +464,7 @@ function gameOverDraw()
 	end
 
 	love.graphics.printf("You were killed by " .. lastKilledBy, 0, 650, int_window_width, "center")
-	love.graphics.printf("You survived: " .. math.floor(math.mod(int_totalTime, 3600)/60) .. ":" .. math.floor(math.mod(int_totalTime,60)), 0, 680, int_window_width, "center")
+	love.graphics.printf("You survived: " .. minutes_zero .. math.floor(math.mod(int_totalTime, 3600)/60) .. ":" .. seconds_zero .. math.floor(math.mod(int_totalTime,60)), 0, 680, int_window_width, "center")
 
 	gameInfoDraw()
 end

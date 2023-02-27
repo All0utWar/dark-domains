@@ -1,96 +1,22 @@
-Beta 0.2.2.1pr:
--Fixed game crash when player dies
--Fixed game crash when attempting to delete save file in-game
--Fixed game title appearing behind Options menu panel
+Beta 0.2.3.1pr:
+-Reverted grouping behavior change
+-Increased spawn chance of enemies stronger than bats
+-Increased speed of all enemies
+-Increased enemy health slighty
+
+Beta 0.2.3pr:
+-Added diagonal spawn locations for enemies
+-Added support to spawn other enemy types
+
+-Fixed potential crash that causes enemy animation to fail to initialize
+-Fixed survival timer in Game Over screen truncating 0s
+
+-Changed how enemies group together
+-Changed radius in which enemies spawn to shrink based on time played
 
 BALANCE:
--Increased rarity of coins slightly
-
-------------------------------------------------
-Beta 0.2.2pr:
--Fixed game crash when weapons would be removed
--Fixed possible game crash when no weapon was equipped
--Fixed numpad keys not working in developer mode
--Fixed weapons from chests spawning on player position rather than the chest's (still slightly offset)
--Fixed weapon despawn fadeout not working correctly
-
--Changed sprite for chest
-
-------------------------------------------------
-Beta 0.2.1pr:
--Added developer mode
--Added new object type, "Artifact"
-	*When opened, drops a weapon
--Added quit confirmation screen when in-game
--Added button for deleting save game
--Added despawn timer dropped weapons
--Added fullscreen setting
-
--Fixed survival time counting up while player is dead
--Fixed All Time Kills not counting correctly
--Fixed weapons drawing on top of enemies, weapon effects now draw on top of enemies
--Fixed enemies gaining huge amounts of speed when grouped together
--Fixed misaligned hitboxes on objects
--Fixed targeting crosshair still tracking when game is paused
-
--Modified enemy stats
-	*Bat:
-		*Base speed increased (100 to 150)
-		*Acceleration increased (45 to 80)
-		*Attack velocity slightly increased
-	*Zombie:
-		*Base speed increased (200 to 225)
-		*Acceleration increased (65 to 100)
-		*Limit increased (10 to 12)
-		*Attack speed decreased (.16 to .2)
-	*Spirit
-		*Base speed increased (300 to 325)
-		*Acceleration increased (85 to 150)
-		*Limit increased (4 to 8)
-		*Damage increased (8 to 9)
-		*Spawn chance decreased
-		*Attack speed decreased (.3 to .35)
-		*RoF decreased (.66 to .88)
--Modified enemy spawner
-	*Spawn rate increased
--Modified draw order for all objects
--Modified rarity of drops
-	*Added chest drop to enemies
-	*Removed weapon drops from enemies
-	*Potions and Coins slightly more rare
-
-------------------------------------------------
-Beta 0.2.0pr
--Added more contributors to credits page that we forgot to add
-	*Gamera - Enrique García Cota
-	*TSerial - Taehl
-	*Resolution Solution - Vovkiv
--Added run stats to Game Over screen
--Added tracking of more stats
--Added Stats screen
--Added Options menu
-	*Audio volume settings(Master, Music, Effects)
--Added Options button to Pause Menu
-
--Fixed consumables persisting through runs
--Fixed damage scaling on weapons
--Fixed being able to pickup weapons when game is paused
--Fixed cursor being hidden when game is paused and no weapon is equipped
--Fixed gameplay music playing while game is paused
--Fixed gameplay music playing when dead
--Fixed weapons and consumables spawning outside of arena
--Fixed Kill Counter not counting correctly
-
--Modified weapon rarity to be scaled off base weapon damage
-	*Previously was using set values that some weapons could never obtain)
--Modified weapon damage to be scaled partially off current difficulty
--Modified size of Credits button on Main Menu
--Modified stats of enemies
-	*Bats and Zombies will attack faster
-	*Spirits will attack slower and spawn less frequently
-	*Zombies and Spirits now spawn in slightly later
--Modified enemy to enemy collision resolution
--Modified gameplay music volume
--Modified render so weapons + weapon effects draw over enemies
-
--Removed reference to library that wasn't being used
+-Increased max difficulty level (5 to 7)
+-Increased acceleration of all enemy types+tiers
+-Increased enemy rate of fire for each enemy tier slightly
+-Increased rate of spawns
+-Rebalanced higher tiered enemies to be more in-line with basic tiers

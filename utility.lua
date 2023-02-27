@@ -230,7 +230,9 @@ function takeDamage(attacker, victims, dmg)
 			end
 		end
 
+		--Cleans up object
 		victims.isDead = true
+		--stateChange(victims, "dead")
 
 		if victims.archetype == "enemy" then
 			int_total_enemies = int_total_enemies - 1
@@ -703,7 +705,7 @@ function stopSound(snd)
 	for i,v in pairs(snd_effects) do
 		if i == snd then
 			love.audio.stop(v)
-			print(i,v)
+			--print(i,v)
 		end
 	end
 end
@@ -785,6 +787,13 @@ function character_animation_change(user)
 		local enemy_state = ("img_foe_" .. user.class.enemyType .. user.class.id .. "_" .. user.state)
 		user.animationTable = _G[enemy_state]
 	end
+
+--[[
+	if user.state == "dead" then
+		animationTimeScale(user, 2)
+		user.animationTable = img_gore_splat
+	end
+	--]]
 end
 
 --Changes timescale of animations(anim speed)
