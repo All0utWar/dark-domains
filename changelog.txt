@@ -1,22 +1,3 @@
-Beta 0.2.3.1pr:
--Reverted grouping behavior change
--Increased spawn chance of enemies stronger than bats
--Increased speed of all enemies
--Increased enemy health slighty
-
-Beta 0.2.3pr:
--Added diagonal spawn locations for enemies
--Added support to spawn other enemy types
-
--Fixed potential crash that causes enemy animation to fail to initialize
--Fixed survival timer in Game Over screen truncating 0s
-
--Changed how enemies group together
--Changed radius in which enemies spawn to shrink based on time played
-
-BALANCE:
--Increased max difficulty level (5 to 7)
--Increased acceleration of all enemy types+tiers
--Increased enemy rate of fire for each enemy tier slightly
--Increased rate of spawns
--Rebalanced higher tiered enemies to be more in-line with basic tiers
+Beta 0.2.3.2pr:
+-Fixed tier 2 Spirits spawning before tier 1
+-Fixed chests not despawning between runs

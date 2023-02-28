@@ -219,9 +219,9 @@ function enemy.spawnManager(dt)
 	elseif int_difficulty == 2 then
 		creatureSuffix = 1
 	elseif int_difficulty == 3 then
-		creatureSuffix = love.math.random(1, 2)
+		creatureSuffix = 1
 	elseif int_difficulty == 4 then
-		creatureSuffix = 2
+		creatureSuffix = love.math.random(1, 2)
 	elseif int_difficulty == 5 then
 		creatureSuffix = 2
 	elseif int_difficulty == 6 then

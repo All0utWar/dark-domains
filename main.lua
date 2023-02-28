@@ -22,7 +22,7 @@ require "artifact"
 local utf8 = require("utf8")
 
 function love.load()
-	str_BUILD_VERSION = "0.2.3.1pr"
+	str_BUILD_VERSION = "0.2.3.2pr"
 	str_BUILD_DATE = "02/27/2023"
 	str_LOVE_VERSION = "Recommended: 11.4"
 	str_GAME_NAME = "Dark\nDomains"

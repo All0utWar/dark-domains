@@ -531,8 +531,12 @@ function destroyAllObjects()
 		table.remove(consumable, i)
 	end
 
+	for i = 1, #artifact do
+		table.remove(artifact, i)
+	end
+
 	--Ensure that all tables are empty sets before flipping back to false
-	if #weapon <= 0 and #player <= 0 and #enemy <= 0 and #consumable <= 0 then
+	if #weapon <= 0 and #player <= 0 and #enemy <= 0 and #consumable <= 0 and #artifact <= 0 then
 		bool_cleanup = false
 	end
 end
